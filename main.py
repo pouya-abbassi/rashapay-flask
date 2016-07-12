@@ -11,7 +11,7 @@
 
 __author__ = "Pouya Abbassi"
 __copyright__ = "Copyright 2016, http://RashaPay.com"
-__credits__ = ["Nima Barzegar"]
+__credits__ = "Nima Barzegar"
 __license__ = "GPL-v3 https://www.gnu.org/licenses/gpl-3.0.en.html"
 __version__ = "0.1.0"
 __maintainer__ = "Pouya Abbassi"
@@ -25,7 +25,6 @@ import random               # Used for generating random orderID
 app = Flask(__name__)
 
 consumer_key = "1234:5678"			# Copy the Ckey of your website from (http://rashapay.com//userpanel.php?action=listofsites)
-orderid = str(random.randint(1,99999999999))	# Just a random integer as orderID
 callback = "http://localhost/callback"		# User will redirected here after payment
 
 @app.route("/")
@@ -34,6 +33,7 @@ def index():
 
 @app.route("/request", methods=['GET', 'POST'])
 def req():
+	orderid = str(random.randint(1,99999999999))	# Just a random integer as orderID
 	amount = request.form['amount']			# Integer, Min 1000 (rials)
 	email = request.form['email']			# Buyer Email (Bank may send an email to confirm payment)
 	name = request.form['name']			# Buyer name
