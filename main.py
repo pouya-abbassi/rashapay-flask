@@ -18,10 +18,10 @@ __maintainer__ = "Pouya Abbassi"
 __status__ = "Production"
 
 
-from flask import Flask, request, redirect
-import urllib               # Used for sending request to rashapay webservice
-import json                 # Used for parsing json object
-import random               # Used for generating random orderID
+from flask import Flask, request, redirect	# The framework!
+import urllib					# Used for sending request to rashapay webservice
+import json					# Used for parsing json object
+import random					# Used for generating random orderID
 app = Flask(__name__)
 
 consumer_key = "1234:5678"			# Copy the Ckey of your website from (http://rashapay.com//userpanel.php?action=listofsites)
@@ -31,7 +31,7 @@ callback = "http://localhost/callback"		# User will redirected here after paymen
 def index():
 	return '<meta charset="utf-8"><style>*{direction:rtl;text-align:right;}</style><h1>ماژول پایتون درگاه پرداخت راشاپی</h1><form method="post"action="request"accept-charset="UTF-8"enctype="application/x-www-form-urlencoded"autocomplete="off"><table><tr><td>مبلغ پرداختی:</td><td><input type="text"name="amount"value="1000"></td></tr><tr><td>نام:</td><td><input type="text"name="name"></td></tr><tr><td>ایمیل:</td><td><input type="text"name="email"></td></tr><tr><td>موبایل:</td><td><input type="text"name="mobile"></td></tr><tr><td>توضیحات:</td><td><textarea name="description" rows="10" cols="30" maxlenght="200"></textarea></td></tr><tr><td></td><td><input type="submit"value="پرداخت"></td></tr></form>'
 
-@app.route("/request", methods=['GET', 'POST'])
+@app.route("/request", methods=['POST'])
 def req():
 	orderid = str(random.randint(1,99999999999))	# Just a random integer as orderID
 	amount = request.form['amount']			# Integer, Min 1000 (rials)
@@ -43,7 +43,7 @@ def req():
 	data = urllib.urlencode({"consumer_key":consumer_key,"amount":amount,"email":email,"name":name,"orderid":orderid,"callback":callback,"mobile":mobile,"description":description})	# Generating data for creating the request.
 	u = urllib.urlopen("http://rashapay.com/srv/rest/rpaypaymentrequest", data)	# Sending data to the webservice url.
 
-	obj = u.read() # Reading received data
+	obj = u.read()	# Reading received data
 	parsed_json = json.loads(obj)	# Parsing json object
 
 	if parsed_json['status'] == '11' :
@@ -60,7 +60,7 @@ def req():
 		output = 'فرمت ایمیل صحیح نیست.'								# Email format is invalid
 	elif parsed_json['status'] == '17' :
 		output = 'آدرس callback تعریف نشده است.'							# No CallBack url was declared
-	elif parsed_json['status'] == 'response':
+	elif parsed_json['status'] == 'response' :
 		output = 0										    	# Everything is fine, Getting the "token" part of json data and appending it to the payment url
 	else :
 		output = str(parsed_json['status'])								# Contact us at http://rashapay.com//about.php?#contactus
@@ -69,6 +69,36 @@ def req():
 		return redirect("http://rashapay.com/srv/gatewaychannel/requestpayment/" + parsed_json['token'])
 	else :
 		return output
+
+@app.route("/callback", methods=['post','get'])
+def callback():
+	if request.form['refid'] == '10' :
+		return ('تراکنش ناتمام')
+	else :
+		orderid = request.form['orderid']
+		refid = request.form['refid']
+
+		data = urllib.urlencode({"consumer_key":consumer_key,"orderid":orderid,"refid":refid})	# Generating data for creating the request.
+		u = urllib.urlopen("http://rashapay.com/srv/rest/rpaypaymentverify", data)	# Sending data to the webservice url.
+
+		obj = u.read()	# Reading received data
+		parsed_json = json.loads(obj)	# Parsing json object
+
+		if parsed_json['status'] == 'response' :
+			if str(parsed_json['code']) == '0' :
+				return 'Order ID: ' + str(orderid) + '<br>The transaction was successful: ' + str(refid)
+			else :
+				return 'Error code: ' + str(parsed_json['code']) + '<br>Order ID: ' + str(orderid) + ' failed.'
+		else :
+			return 'Error code: ' + str(parsed_json['status']) + '<br>Order ID: ' + str(orderid) + ' failed.'
+
+	return 'hello'
+
+
+@app.route("/test")
+def test():
+	return '<form action="callback" method="post"><input type="text" name="consumer_key" value="2435:1861"><input type="text" name="orderid" value="21826051646"><input type="text" name="refid" value="117389035664"><button></button></form>'
+
 
 if __name__ == "__main__":
 	app.run()
