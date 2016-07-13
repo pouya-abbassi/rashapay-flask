@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Rashapay-flask by pouya-abbassi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Rashapay-flask</h1>
+      <h2 class="project-tagline">ماژول پرداخت آنلاین راشاپی نسخه‌ی فلسک | rashapay.com Flask module</h2>
+      <a href="https://github.com/pouya-abbassi/rashapay-flask" class="btn">View on GitHub</a>
+      <a href="https://github.com/pouya-abbassi/rashapay-flask/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/pouya-abbassi/rashapay-flask/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h3>
+<a id="ماژول-پایتون-درگاه-پرداخت-راشاپی" class="anchor" href="#%D9%85%D8%A7%DA%98%D9%88%D9%84-%D9%BE%D8%A7%DB%8C%D8%AA%D9%88%D9%86-%D8%AF%D8%B1%DA%AF%D8%A7%D9%87-%D9%BE%D8%B1%D8%AF%D8%A7%D8%AE%D8%AA-%D8%B1%D8%A7%D8%B4%D8%A7%D9%BE%DB%8C" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>ماژول پایتون درگاه پرداخت راشاپی</h3>
+
+<p><a href="http://rashapay.com">درگاه پرداخت راشاپی</a> محیطی امن برای تراکنشهای مالی شماست. با استفاده از این اسکریپت پایتون که برای فریموورک Flask طراحی شده، میتوانید وبسایتهای خود را به درگاه پرداخت مجهز کنید.</p>
+
+<h3>
+<a id="نصب-نیازمندیها" class="anchor" href="#%D9%86%D8%B5%D8%A8-%D9%86%DB%8C%D8%A7%D8%B2%D9%85%D9%86%D8%AF%DB%8C%D9%87%D8%A7" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>نصب نیازمندیها</h3>
+
+<p>نیازمندیهای مورد نیاز برای این اسکریپت، در فایلی به نام requirements.txt ذخیره شده که میتوانید با اجرای زیر آنها را نصب کنید:</p>
+
+<p><code>pip install -r requirements.txt</code></p>
+
+<p>اسکریپت برای پایتون ورژن 2.7 نوشته شده ولی مشکلی با ورژن 3.5 نیز نخواهید داشت. در بالای اسکریپت و پس از توضیحات، کتابخانه‌های <code>flask</code>، <code>urllib</code>، <code>json</code> و <code>random</code> فراخوانی شده‌اند.</p>
+
+<p>کتابخانه‌ی flask برای راه‌اندازی فریموورک flask و همچنین ایجاد امکان نمایش سایت در بروزر فراخوانی میشود. تابع <code>request</code> برای پردازش ریکوئستهای <code>POST</code> که به صفحه‌ها ارسال میشود مورد استفاده قرار میگرد و از <code>redirect</code> برای انتقال کاربر به صفحه‌ی پرداخت استفاده میکنیم. جهت صرفه جویی در مصرف منابع سیستم، به جای کد import flask از کد <code>from flask import flask, requst, redirect</code> استفاده شده که فقط توابع مورد نیاز فراخوانی شوند.</p>
+
+<p>کتابخانه‌ی urllib برای فرستادن درخواست به وب‌سرویس و دریافت پاسخ از وب‌سرویس مورد استفاده قرار میگیرد. اطلاعات به صورت فورم post ارسال میشوند.</p>
+
+<p>کتابخانه‌ی json برای پردازش اطلاعات دریافتی از وب‌سرویس مورد استفاده قرار میگیرد. اطلاعات به صورت آبجکت json دریافت میشوند.</p>
+
+<p>کتابخانه‌ی random برای تولید orderid به صورت رندوم مورد استفاده قرار میگیرد. این متغیر برای هر تراکنش باید عددی متفاوت از نوع اعداد صحیح باشد.</p>
+
+<h3>
+<a id="معرفی-متغیرها" class="anchor" href="#%D9%85%D8%B9%D8%B1%D9%81%DB%8C-%D9%85%D8%AA%D8%BA%DB%8C%D8%B1%D9%87%D8%A7" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>معرفی متغیرها</h3>
+
+<p>جهت اتصال به سرویس راشاپی و پرداخت آنلاین، شما به یک کد تحت نام CKey نیاز دارید که میتوانید آنرا از قسمت «لیست سایتهای ثبت شده» در پنل راشاپی دریافت کنید. برای هر بار اتصال به سامانه‌ی پرداخت، این کد مورد نیاز است. آنرا در نمونه کد پایتون مقابل متغیر <code>consumer_key</code> قرار دهید. <code>‍‍consumer_key = "1234:5678"</code>. این متغیر از نوع Global میباشد و در تمام مراحل یکسان است.</p>
+
+<p>هر تراکنش، نیازمند یک orderid خاص و یکتا از نوع عدد صحیح میباشد که در اسکریپت حاظر، توسط تابع <code>rand()</code> تولید میشود.</p>
+
+<p><code>orderid = random.randint(1,99999999999)</code></p>
+
+<p>این تابع در تمامی نسخه‌های پایتون موجود است و برای استفاده از آن باید کد import random در بالای اسکریپت نوشته شود. کد <code>‍orderid = random.randint(1,99999999999)</code> که برای ایجاد کد تصادفی نوشته شده است، در صفحه‌ی request قرار داده شده بنابر این،متغیر orderid به صورت Local میباشد و فقط در همین صفحه وجود دارد. (در صفحه‌‌ی callback هم به آن نیاز داریم ولی از طریق متد post از طرف درگاه پرداخت دریافت میشود)</p>
+
+<p>متغیر callback حاوی آدرس بازگشت درگاه پرداخت است. آدرسی که کاربر پس از پرداخت موفق یا ناموفق، به آن بازگردانده میشود. <code>‍‍callback = "http://localhost/callback"</code> این متغیر Global میباشد.</p>
+
+<p>متغیر amount حاوی مبلغ تراکنش به ریال و به صورت عدد صحیح میباشد. حداقل میزان مجاز، ۱۰۰۰ میباشد. amount = "1000". این متغیر توسط مشتری پر میشود.</p>
+
+<p>متغیرهای name، email، mobile و description نیز توسط مشتری پر میشوند.</p>
+
+<hr>
+
+<h1>
+<a id="انجام-تراکنش" class="anchor" href="#%D8%A7%D9%86%D8%AC%D8%A7%D9%85-%D8%AA%D8%B1%D8%A7%DA%A9%D9%86%D8%B4" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>انجام تراکنش</h1>
+
+<h3>
+<a id="ارسال-اطلاعات-به-وبسرویس" class="anchor" href="#%D8%A7%D8%B1%D8%B3%D8%A7%D9%84-%D8%A7%D8%B7%D9%84%D8%A7%D8%B9%D8%A7%D8%AA-%D8%A8%D9%87-%D9%88%D8%A8%D8%B3%D8%B1%D9%88%DB%8C%D8%B3" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>ارسال اطلاعات به وب‌سرویس</h3>
+
+<p>اطلاعاتی که در متغیرهای ذکر شده وارد شدند، باید توسط متد post به آدرس وب سرویس (<a href="http://rashapay.com/srv/rest/rpaypaymentrequest">http://rashapay.com/srv/rest/rpaypaymentrequest</a>) ارسال شوند. این متغیرها ابتدا توسط <code>urllib.urlencode</code> در آبجکتی به نام data ذخیره شده و سپس توسط <code>urllib.urlopen</code> به نشانی ذکر شده ارسال میشوند. برای استفاده از urllib باید آنرا نصب و فراخوانی کنید که فراخوانی آن توسط کد <code>import urllib</code> انجام شده است.</p>
+
+<h3>
+<a id="خواندن-اطلاعات-دریافتی-از-وبسرویس" class="anchor" href="#%D8%AE%D9%88%D8%A7%D9%86%D8%AF%D9%86-%D8%A7%D8%B7%D9%84%D8%A7%D8%B9%D8%A7%D8%AA-%D8%AF%D8%B1%DB%8C%D8%A7%D9%81%D8%AA%DB%8C-%D8%A7%D8%B2-%D9%88%D8%A8%D8%B3%D8%B1%D9%88%DB%8C%D8%B3" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>خواندن اطلاعات دریافتی از وب‌سرویس</h3>
+
+<p>پاسخ دریافتی از وب‌سرویس در متغیری به نام <code>u</code> ریخته شده و سپس توسط <code>u.read()</code> خوانده شده و درون آبجکتی به نام obj ذخیره میشوند که آبجکتی از نوع json میباشد. برای پردازش آبجکت جیسون، نیاز به نصب و فراخوانی آن در برنامه دارید که توسط کد <code>import json</code> در اسکریپت فراخوانی میشود. برای دیکد کردن این آبجکت، از دستور <code>json.loads(obj)</code> استفاده میکنیم و نتیجه را در <code>parsed_json</code> نگهداری میکنیم.</p>
+
+<h3>
+<a id="پردازش-اطلاعات-دریافتی-از-وبسرویس" class="anchor" href="#%D9%BE%D8%B1%D8%AF%D8%A7%D8%B2%D8%B4-%D8%A7%D8%B7%D9%84%D8%A7%D8%B9%D8%A7%D8%AA-%D8%AF%D8%B1%DB%8C%D8%A7%D9%81%D8%AA%DB%8C-%D8%A7%D8%B2-%D9%88%D8%A8%D8%B3%D8%B1%D9%88%DB%8C%D8%B3" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>پردازش اطلاعات دریافتی از وب‌سرویس</h3>
+
+<p>پاسخ دریافتی از وب‌سرویس به صورت یک آبجکت json خواهد بود که حاوی فاکتوری به نام <code>status</code> میباشد. فاکتور status مشخص کننده‌ی وضعیت درستی یا نادرستی اطلاعات ارسال شده به وب‌سرویس میباشد.</p>
+
+<p>اگر status برابر با <code>response</code> بود، آنگاه اطلاعات ارسالی به وب‌سرویس صحیح بوده و تراکنش امکان پذیر است. در این صورت، فاکتور دیگری با نام <code>token</code> نیز دریافت میشود که حاوی یک string از نوع hash میباشد که با اضافه کردن آن به انتهای نشانی <a href="http://rashapay.com/srv/gatewaychannel/requestpayment/">http://rashapay.com/srv/gatewaychannel/requestpayment/</a> آدرس پرداخت به دست می‌آید. به عنوان مثال:</p>
+
+<p>‍‍http://rashapay.com/srv/gatewaychannel/requestpayment/CSsL11DshoT1ebUPq7jMby36qzNztE</p>
+
+<p>اگر مقدار status برابر با اعداد ۱۱ الی ۱۷ بود، از طریق <code>if/elif</code>های تودرتو، کد خطای مربوطه پیدا شده و نمایش داده میشود. کدهای خطا مطابق جدول زیر میباشد:</p>
+
+<table>
+<thead>
+<tr>
+<th>status</th>
+<th>توضیح</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>response</td>
+<td>مشخصات ارسالی صحیح است. با استفاده از توکن، آدرس پرداخت را بسازید.</td>
+</tr>
+<tr>
+<td>11</td>
+<td>مشخصات ارسالی نادرست است.</td>
+</tr>
+<tr>
+<td>12</td>
+<td>اتصال به وب‌سرویس ناموفق است.</td>
+</tr>
+<tr>
+<td>13</td>
+<td>IP سایت درخواست کننده با IP ثبت شده در سیستم راشا‌پرداخت مطابقت ندارد.</td>
+</tr>
+<tr>
+<td>14</td>
+<td>شماره‌ی سفارش ارسالی (orderid) تکراری است.</td>
+</tr>
+<tr>
+<td>15</td>
+<td>فرمت مبلغ نامعتبر است.</td>
+</tr>
+<tr>
+<td>16</td>
+<td>فرمت ایمیل نامعتبر است.</td>
+</tr>
+<tr>
+<td>17</td>
+<td>نشانی callback تعریف نشده است.</td>
+</tr>
+</tbody>
+</table>
+
+<hr>
+
+<h1>
+<a id="بازگشت-از-تراکنش-و-تست-وضعیت" class="anchor" href="#%D8%A8%D8%A7%D8%B2%DA%AF%D8%B4%D8%AA-%D8%A7%D8%B2-%D8%AA%D8%B1%D8%A7%DA%A9%D9%86%D8%B4-%D9%88-%D8%AA%D8%B3%D8%AA-%D9%88%D8%B6%D8%B9%DB%8C%D8%AA" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>بازگشت از تراکنش و تست وضعیت</h1>
+
+<h3>
+<a id="پردازش-اطلاعات-دریافتی-از-وبسرویس-1" class="anchor" href="#%D9%BE%D8%B1%D8%AF%D8%A7%D8%B2%D8%B4-%D8%A7%D8%B7%D9%84%D8%A7%D8%B9%D8%A7%D8%AA-%D8%AF%D8%B1%DB%8C%D8%A7%D9%81%D8%AA%DB%8C-%D8%A7%D8%B2-%D9%88%D8%A8%D8%B3%D8%B1%D9%88%DB%8C%D8%B3-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>پردازش اطلاعات دریافتی از وب‌سرویس</h3>
+
+<p>زمانی که کاربر به صفحه‌ی callback منتقل میشود، اطلاعاتی از طریق متد post به این صفحه فرستاده میشوند که درستی یا نادرستی تراکنش را نشان میدهند. بنابراین در تعریف صفحه‌ی callback نیاز به تعریف متد post داریم.
+<code>@app.route("/callback", methods=['post'])</code></p>
+
+<p>اگر وبسایت شما از دیتابیس پشتیبانی میکند، در این مرحله و پس از اطمینان از صحت تراکنش، اطلاعات کاربر و تراکنش وی را در دیتابیس ذخیره کنید.</p>
+
+<p>در صفحه‌ی callback عملیات پردازش، ارسال و دریافت اطلاعات مشابه صفحه‌های دیگر انجام میشود پس از توضیح مسائل تکراری اجتناب میشود.</p>
+
+<p>وضعیت کلی اطلاعات بازگشت به دو صورت میباشد که اگر status برابر با response بود، دو حالت ممکن است برای متغیر code وجود داشته باشد. در حالتی که code برابر با 0 بود یعنی تراکنش موفق بوده و اگر برابر با 10 بود یعنی تراکنش ناتمام میباشد.</p>
+
+<p>اگر status برابر با response نبود، و برابر با یکی از اعداد 11، 12، 13 ویا 18 بود، از طریق جدول زیر میتوان خطایابی را انجام داد.</p>
+
+<table>
+<thead>
+<tr>
+<th>status</th>
+<th>توضیح</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>response</td>
+<td>اگر کد برابر با 0 بود، تراکنش موفق و اگر برابر با 10 بود تراکنش ناتمام است.</td>
+</tr>
+<tr>
+<td>11</td>
+<td>مشخصات ارسالی نادرست است.</td>
+</tr>
+<tr>
+<td>12</td>
+<td>اتصال به وب‌سرویس ناموفق است.</td>
+</tr>
+<tr>
+<td>13</td>
+<td>IP سایت درخواست کننده با IP ثبت شده در سیستم راشا‌پرداخت مطابقت ندارد.</td>
+</tr>
+<tr>
+<td>18</td>
+<td>تراکنشی با مشخصات ارسالی موجود نیست.</td>
+</tr>
+</tbody>
+</table>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/pouya-abbassi/rashapay-flask">Rashapay-flask</a> is maintained by <a href="https://github.com/pouya-abbassi">pouya-abbassi</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
