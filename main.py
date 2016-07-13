@@ -93,10 +93,5 @@ def callback():
 			return 'Error code: ' + str(parsed_json['status']) + '<br>Order ID: ' + str(orderid) + ' failed.'
 
 
-@app.route("/test")	# /test is just for testing. Sends some data to /callback to see what will happen.
-def test():
-	return '<form action="callback" method="post"><input type="text" name="consumer_key" value="2435:1861"><input type="text" name="orderid" value="21826051646"><input type="text" name="refid" value="117389035664"><button></button></form>'
-
-
 if __name__ == "__main__":	# Modularity is the key!
 	app.run()
