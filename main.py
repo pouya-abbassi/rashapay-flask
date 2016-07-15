@@ -22,6 +22,7 @@ from flask import Flask, request, redirect	# The framework!
 import urllib					# Used for sending request to rashapay webservice
 import json					# Used for parsing json object
 import random					# Used for generating random orderID
+import base64
 app = Flask(__name__)				# If you are a flask developer, you know what it means!
 
 consumer_key = "1234:5678"			# Copy the Ckey of your website from (http://rashapay.com//userpanel.php?action=listofsites)
@@ -33,12 +34,12 @@ def index():
 
 @app.route("/request", methods=['POST'])	# This page will get user data and sends request to the webservice
 def req():
-	orderid = str(random.randint(1,99999999999))	# Just a random integer as orderID
-	amount = request.form['amount']			# Integer, Min 1000 (rials)
-	email = request.form['email']			# Buyer Email (Bank may send an email to confirm payment)
-	name = request.form['name']			# Buyer name
-	mobile = request.form['mobile']			# Buyer phone number
-	description = request.form['description']	# Max 200 character
+	orderid = str(random.randint(1,99999999999))				# Just a random integer as orderID
+	amount = request.form['amount']						# Integer, Min 1000 (rials)
+	email = request.form['email']						# Buyer Email (Bank may send an email to confirm payment)
+	name = urllib.quote(request.form['name'].encode('utf-8'))		# Buyer name | You can also inser UTF-8 text
+	mobile = request.form['mobile']						# Buyer phone number
+	description = urllib.quote(request.form['description'].encode('utf-8'))	# Max 200 character | You can also insert UTF-8 text
 
 	data = urllib.urlencode({"consumer_key":consumer_key,"amount":amount,"email":email,"name":name,"orderid":orderid,"callback":callback,"mobile":mobile,"description":description})	# Generating data for creating the request.
 	u = urllib.urlopen("http://rashapay.com/srv/rest/rpaypaymentrequest", data)	# Sending data to the webservice url.
